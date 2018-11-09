@@ -26,26 +26,55 @@ var quizEnd = false;
 
 $(document).ready(function () {
 
+    // Display the first question
     displayCurrentQ();
     $(this).find(".selectResponseMessage").hide();
 
-    $(this).find(".next").on("click", function () {
-        if (!quizEnd) {
+    // On clicking next, display the next question
+    $(this).find(".nextButton").on("click", function () {
+        if (!quizOver) {
+
             value = $("input[type='radio']:checked").val();
 
             if (value == undefined) {
-                $(document).find(".selectResponseMessage").text("please select a response");
+                $(document).find(".selectResponseMessage").text("Please select an answer");
                 $(document).find(".selectResponseMessage").show();
             } else {
+                // TODO: Remove any message -> not sure if this is efficient to call this each time....
                 $(document).find(".selectResponseMessage").hide();
+
                 if (value == questions[currentQ].correctAnswer) {
-                    correctAnswer++;
+                    correctAnswers++;
+                }
+
+                currentQ++;
+                if (currentQ < questions.length) {
+                    displayCurrentQ();
+                } else {
+                    displayScore();
+
+                    $(document).find(".nextButton").text("Play Again?");
+                    quizOver = true;
                 }
             }
-        } else {
-            
+        } else { // quiz is over and clicked the next button (which now displays 'Play Again?'
+            quizOver = false;
+            $(document).find(".nextButton").text("Next Question");
+            resetQuiz();
+            displayCurrentQ();
+            hideScore();
         }
-    })
+    });
 
+});
 
-})
+function displayCurrentQ() {
+    console.log("show current question");
+    var question = questions[currentQ].question;
+    var questionClass = $(document).find(".quizContainer > .question");
+    var choiceList = $(document).find(".quizContainer > .choiceList");
+    var numChoise = questions[currentQ].choices.length;
+
+    $(questionClass).text(question);
+    
+}
